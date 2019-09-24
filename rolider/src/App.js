@@ -1,40 +1,48 @@
 import React,{Component} from 'react';
-import logo from './logo.svg';
+import { CardList } from './components/card-list/cardList.component'
+import { SearchBox } from './components/searchBox/searchBoxComponent'
 import './App.css';
+
 
 class App extends Component {
   constructor(){
     super()
     this.state = {
-      monsiters:[
-        {
-          name:'fransitein',
-          id:1
-        },
-        {
-          name:'john doe',
-          id:2
-        },
-        {
-          name:'frankies',
-          id:3
-        }
-      ]
+      monsiters:[],
+      searchField:''
 
     }
   }
+  // life cycle methods
+  componentDidMount(){
+    fetch('https://jsonplaceholder.typicode.com/users')
+    .then(response => response.json())
+    .then(users => this.setState({monsiters:users}))
+
+  }
+  // arrow functions refference the state to which it was created
+  handleChange = (event) =>(
+    this.setState({searchField:event.target.value})
+  )
 
   render(){
+    const { monsiters, searchField} = this.state
+    const filterMonsters = 
+      monsiters.filter(monsiter => 
+        monsiter.name.toLowerCase()
+          .includes(searchField.toLowerCase())
+          )
     return(
       <div className="App">
-        {
-          this.state.monsiters.map(monsiter=>
-          <h1 key={monsiter.id}>{monsiter.name}
-          </h1>)
-        }
+        <h1>MONSTERS ROLEDEX</h1>
+        <SearchBox
+        placeholder = 'search monsters'
+        handleChange = {this.handleChange}
+        />
+        <CardList monsiters = {filterMonsters}>
+        </CardList>    
     </div>
     )
-
   }
 }
 
